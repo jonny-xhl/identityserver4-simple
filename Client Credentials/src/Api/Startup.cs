@@ -24,10 +24,9 @@ namespace Api
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     options.Authority  = "https://localhost:5001";
-                    // options.Audience = "api1";
                     options.TokenValidationParameters =new TokenValidationParameters
                     {
-                        ValidateAudience  = false
+                        ValidateAudience  = false,
                     };
                 });
 

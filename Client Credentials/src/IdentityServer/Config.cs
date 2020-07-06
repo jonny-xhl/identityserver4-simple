@@ -9,6 +9,14 @@ namespace IdentityServer
 {
     public static class Config
     {
+        public static IEnumerable<IdentityResource> IdentityResources =>
+            new IdentityResource[]
+            {
+                new IdentityResources.OpenId(),
+                new IdentityResources.Address(),
+                new IdentityResources.Profile(),
+                new IdentityResources.Phone(),
+            };
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {

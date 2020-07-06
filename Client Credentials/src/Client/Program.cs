@@ -37,9 +37,8 @@ namespace Client
             // 第三步：获取受保护资源
             var resourceClient = new HttpClient();
             // 携带token
-            // resourceClient.SetBearerToken(clientCredentialsTokenAsync.AccessToken);
-            resourceClient.SetToken("Bearer",clientCredentialsTokenAsync.AccessToken);
-            var resourceResponseMessage = await client.GetAsync("https://localhost:6001/identity");
+            resourceClient.SetBearerToken(clientCredentialsTokenAsync.AccessToken);
+            var resourceResponseMessage = await resourceClient.GetAsync("https://localhost:6001/identity");
             if (!resourceResponseMessage.IsSuccessStatusCode)
             {
                 Console.WriteLine(resourceResponseMessage.StatusCode);
