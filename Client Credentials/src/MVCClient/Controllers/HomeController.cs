@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -28,7 +30,7 @@ namespace MVCClient.Controllers
         public async Task<IActionResult> Privacy()
         {
             // 获取相关数据
-            var accessToken =await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+            var accessToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
             var idToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
             var refreshToekn = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
             ViewBag.AcccessToken = accessToken;
@@ -40,7 +42,18 @@ namespace MVCClient.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            // 清除本地cookie
+            var signOut = await Task.FromResult<SignOutResult>(SignOut(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                OpenIdConnectDefaults.AuthenticationScheme));
+            return signOut;
         }
     }
 }
