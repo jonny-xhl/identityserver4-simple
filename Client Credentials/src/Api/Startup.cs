@@ -30,7 +30,7 @@ namespace Api
                     {
                         ValidateAudience = true,
                         // 多久验证一次token；默认5分钟，为了测试这里设定为1分钟。这里客户端和资源服务器肯定存在一个时间差的问题，需要根据实际情况进行设定
-                        ClockSkew = TimeSpan.FromMinutes(20),
+                        ClockSkew = TimeSpan.FromMinutes(1),
                         // 设定令牌是否必须具有“过期”值，默认为true
                         RequireExpirationTime = true
                     };
