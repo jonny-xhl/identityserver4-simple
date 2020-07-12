@@ -34,6 +34,8 @@ namespace IdentityServerHost.Quickstart.UI
                         Password = "alice",
                         Claims =
                         {
+                            // 配置Audience，api资源验证受众的时候用到
+                            new Claim(JwtClaimTypes.Audience,"api1.Audience"),
                             new Claim(JwtClaimTypes.Name, "Alice Smith"),
                             new Claim(JwtClaimTypes.GivenName, "Alice"),
                             new Claim(JwtClaimTypes.FamilyName, "Smith"),

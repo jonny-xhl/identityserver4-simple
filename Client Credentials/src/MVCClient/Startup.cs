@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MVCClient
 {
@@ -29,6 +30,7 @@ namespace MVCClient
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddHttpClient("api1");
             
             JwtSecurityTokenHandler.DefaultInboundClaimFilter.Clear();
             JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
@@ -41,6 +43,7 @@ namespace MVCClient
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
                 {
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.Authority = "https://localhost:5001";
                     options.ClientId = "mvc client";
                     options.ClientSecret = "secret";
@@ -49,10 +52,10 @@ namespace MVCClient
                     options.SaveTokens = true;
                     // 设置scope
                     options.Scope.Clear();
+                    options.Scope.Add("api1");
                     // OidcConstants需要安装IdentityModel包
                     options.Scope.Add(OidcConstants.StandardScopes.OpenId);
                     options.Scope.Add(OidcConstants.StandardScopes.Profile);
-                    options.Scope.Add("api1");
                     options.Scope.Add(OidcConstants.StandardScopes.Address);
                     options.Scope.Add(OidcConstants.StandardScopes.Email);
                     options.Scope.Add(OidcConstants.StandardScopes.Phone);

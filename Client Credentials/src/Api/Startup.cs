@@ -23,13 +23,18 @@ namespace Api
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    options.Authority  = "https://localhost:5001";
-                    options.TokenValidationParameters =new TokenValidationParameters
+                    options.Authority = "https://localhost:5001";
+                    options.Audience = "api1";
+                    // 为资源设定验证参数
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateAudience  = false,
+                        ValidateAudience = true,
+                        // 多久验证一次token；默认5分钟，为了测试这里设定为1分钟。这里客户端和资源服务器肯定存在一个时间差的问题，需要根据实际情况进行设定
+                        ClockSkew = TimeSpan.FromMinutes(20),
+                        // 设定令牌是否必须具有“过期”值，默认为true
+                        RequireExpirationTime = true
                     };
                 });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,11 +50,8 @@ namespace Api
             app.UseAuthentication();
 
             app.UseAuthorization();
-            
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

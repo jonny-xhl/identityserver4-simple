@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -16,10 +19,12 @@ namespace MVCClient.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IHttpClientFactory _factory;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IHttpClientFactory factory)
         {
             _logger = logger;
+            _factory = factory;
         }
 
         public IActionResult Index()
@@ -36,6 +41,23 @@ namespace MVCClient.Controllers
             ViewBag.AcccessToken = accessToken;
             ViewBag.IdToken = idToken;
             ViewBag.RefreshToken = refreshToekn;
+
+            #region 请求API
+            // 请求token成功后进行获取“资源”
+            var api1Client = _factory.CreateClient("api1");
+            api1Client.SetBearerToken(accessToken);
+            api1Client.BaseAddress = new Uri("https://localhost:6001/");
+            var identityResponse = await api1Client.GetAsync("identity");
+            if (identityResponse.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                // TODO: 刷新token
+                throw new UnauthorizedAccessException("Unauthorized");
+            }
+            else
+            {
+                ViewBag.IdentityResponse = await identityResponse.Content.ReadAsStringAsync();
+            }
+            #endregion
             return View();
         }
 
