@@ -63,6 +63,7 @@ namespace MVCClient.Controllers
                     await RenewTokensAsync();
                     return RedirectToAction();
                 }
+
                 throw new UnauthorizedAccessException(identityResponse.ReasonPhrase);
             }
             else
@@ -106,9 +107,13 @@ namespace MVCClient.Controllers
             var tokenResponse = await client.RequestRefreshTokenAsync(new RefreshTokenRequest
             {
                 Address = discoveryDocument.TokenEndpoint,
-                ClientSecret = _oidcOptions.ClientSecret,
-                ClientId = _oidcOptions.ClientId,
-                Scope = string.Join(" ", _oidcOptions.Scope),
+                ClientSecret = "secret",
+                ClientId = "mvc client",
+                Scope = "api1 openid profile address email phone offline_access",
+                // 疑惑：这里注入的IOptions<OpenIdConnectOptions>为什么是默认值，并不是配置后的？？？？
+                // ClientSecret = _oidcOptions.ClientSecret,
+                // ClientId = _oidcOptions.ClientId,
+                // Scope = string.Join(" ", _oidcOptions.Scope),
                 // 刷新Token这里得类型需要为RefreshToken
                 GrantType = OpenIdConnectGrantTypes.RefreshToken,
                 // 刷新Token需要携带RefreshToken,也就是当前Token的RefreshToken
@@ -127,7 +132,7 @@ namespace MVCClient.Controllers
                 new AuthenticationToken
                 {
                     Name = OpenIdConnectParameterNames.AccessToken,
-                    Value = tokenResponse.RefreshToken
+                    Value = tokenResponse.AccessToken
                 },
                 new AuthenticationToken
                 {

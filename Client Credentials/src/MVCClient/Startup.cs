@@ -34,6 +34,8 @@ namespace MVCClient
             
             JwtSecurityTokenHandler.DefaultInboundClaimFilter.Clear();
             JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
+
             
             services.AddAuthentication(options =>
                 {
