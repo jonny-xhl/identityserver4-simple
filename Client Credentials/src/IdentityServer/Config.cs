@@ -31,7 +31,7 @@ namespace IdentityServer
             {
                 new ApiResource("api1", "my api1")
                 {
-                    Scopes = { "api1" }
+                    Scopes = {"api1"}
                 },
             };
 
@@ -53,12 +53,12 @@ namespace IdentityServer
                 {
                     ClientId = "mvc client",
                     AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
-                    ClientSecrets = { new Secret("secret".Sha256()) },
+                    ClientSecrets = {new Secret("secret".Sha256())},
                     // 登录成功后调转地址
-                    RedirectUris = { "https://localhost:5002/signin-oidc" },
+                    RedirectUris = {"https://localhost:5002/signin-oidc"},
                     FrontChannelLogoutUri = "https://localhost:5002/signout-oidc",
                     // 登出后调整地址
-                    PostLogoutRedirectUris = { "https://localhost:5002/signout-callback-oidc" },
+                    PostLogoutRedirectUris = {"https://localhost:5002/signout-callback-oidc"},
                     AllowedScopes =
                     {
                         "api1",
@@ -76,6 +76,24 @@ namespace IdentityServer
                     // 运行身份信息中返回OpenId中的身份信息
                     AlwaysIncludeUserClaimsInIdToken = true
                 },
+                // js client
+                new Client
+                {
+                    ClientId = "js",
+                    ClientName = "JavaScript Client",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequireClientSecret = false,
+                    RedirectUris = {"https://localhost:5003/callback.html"},
+                    PostLogoutRedirectUris = {"https://localhost:5003/index.html"},
+                    // 允许跨域的Origin
+                    AllowedCorsOrigins = {"https://localhost:5003"},
+                    AllowedScopes =
+                    {
+                        "api1",
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile
+                    }
+                }
             };
     }
 }

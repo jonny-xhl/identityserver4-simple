@@ -20,6 +20,18 @@ namespace Api
         {
             services.AddControllers();
 
+            // 配置跨域
+            services.AddCors(options =>
+            {
+                // this defines a CORS policy called "default"
+                options.AddPolicy("default", policy =>
+                {
+                    policy.WithOrigins("https://localhost:5003")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
@@ -47,6 +59,8 @@ namespace Api
 
             app.UseRouting();
 
+            app.UseCors("default");
+            
             app.UseAuthentication();
 
             app.UseAuthorization();
